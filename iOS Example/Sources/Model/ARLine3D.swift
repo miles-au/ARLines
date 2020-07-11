@@ -51,10 +51,15 @@ class ARLine3D: SCNNode{
 
 class ContinuousLine: ARLine3D{
     override func draw(){
+        // set position
         let midpoint = beginning.midPoint(to: destination)
         worldPosition = midpoint
+        
+        // configure box node
         let distance = beginning.distance(to: destination)
         geometry = SCNBox(width: width, height: height, length: CGFloat(distance), chamferRadius: chamferRadius)
+        
+        // rotate to proper position
         look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
     }
 }
@@ -64,16 +69,39 @@ class DashLine: ARLine3D{
     var gap = CGFloat(0.01)
     
     override func draw(){
+        // remove existing nodes
+        enumerateChildNodes { node, pointer in
+            node.removeFromParentNode()
+        }
+        
         let distance = beginning.distance(to: destination)
-        let directionVector = beginning.vectorTo(point: destination)
+        let dashVector = beginning.vectorTo(point: destination).normalized() * Float(dashLength)
+        let gapVector = beginning.vectorTo(point: destination).normalized() * Float(gap)
         
-        // a dashed line is made up of multiple continuous lines
+        var dashBeginning = beginning // store position of the particular dash being drawn
+        var distanceLeft = distance // distance that hasn't been covered
         
-        
-        let midpoint = beginning.midPoint(to: destination)
-        worldPosition = midpoint
-        geometry = SCNBox(width: width, height: height, length: CGFloat(distance), chamferRadius: chamferRadius)
-        look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
+        // draw dashes while the full distance hasn't been covered
+        while distanceLeft > 0 {
+            var dashDestination = dashBeginning + dashVector
+            
+            // if this is the last dash, cut it short
+            if dashLength > CGFloat(distanceLeft) {
+                dashDestination = destination
+            }
+            
+            // a dashed line is made up of multiple continuous lines
+            let dash = ContinuousLine(from: dashBeginning, to: dashDestination)
+            dash.convertTransform(dash.transform, from: self)
+            
+            // add the dash and draw it
+            addChildNode(dash)
+            dash.draw()
+
+            // setup the next dash
+            dashBeginning = dashDestination + gapVector
+            distanceLeft -= (dashVector.magnitude() + gapVector.magnitude())
+        }
     }
 }
 

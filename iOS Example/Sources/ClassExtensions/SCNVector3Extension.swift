@@ -49,9 +49,12 @@ extension SCNVector3{
         return SCNVector3(0,0,0)
     }()
     
+    func magnitude() -> Float{
+        return SCNVector3.zero.distance(to: self)
+    }
+    
     func normalized() -> SCNVector3{
-        let magnitude = SCNVector3.zero.distance(to: self)
-        return self / magnitude
+        return self / magnitude()
     }
     
     func vectorTo(point: SCNVector3) -> SCNVector3{
