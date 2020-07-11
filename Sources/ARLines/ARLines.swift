@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-/*@IBDesignable*/ // Xcode does not support IBDesignable, known issue
 public class ARLines: UIView {
     let name = "ARLines loaded"
     
