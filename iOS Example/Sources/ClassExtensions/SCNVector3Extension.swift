@@ -8,12 +8,58 @@
 import Foundation
 import ARKit
 
+// MARK: - Overloaded Operators
 extension SCNVector3{
+    static func + (left: SCNVector3, right: SCNVector3) -> SCNVector3 {
+      return SCNVector3(
+        left.x + right.x,
+        left.y + right.y,
+        left.z + right.z
+      )
+    }
+    
+    static func - (left: SCNVector3, right: SCNVector3) -> SCNVector3 {
+      return SCNVector3(
+        left.x - right.x,
+        left.y - right.y,
+        left.z - right.z
+      )
+    }
+    
+    static func * (left: SCNVector3, right: Float) -> SCNVector3 {
+      return SCNVector3(
+        left.x * right,
+        left.y * right,
+        left.z * right
+      )
+    }
+    
+    static func / (left: SCNVector3, right: Float) -> SCNVector3 {
+      return SCNVector3(
+        left.x / right,
+        left.y / right,
+        left.z / right
+      )
+    }
+}
+
+// MARK: - Custom Functions
+extension SCNVector3{
+    static var zero: SCNVector3 = {
+        return SCNVector3(0,0,0)
+    }()
+    
+    func normalized() -> SCNVector3{
+        let magnitude = SCNVector3.zero.distance(to: self)
+        return self / magnitude
+    }
+    
+    func vectorTo(point: SCNVector3) -> SCNVector3{
+        return point - self
+    }
+    
     func midPoint(to target: SCNVector3) -> SCNVector3{
-        return SCNVector3(
-            (target.x - x) / 2 + x,
-            (target.y - y) / 2 + y,
-            (target.z - z) / 2 + z)
+        return (target - self) / 2 + self
     }
     
     func distance(to targetVector: SCNVector3) -> Float{

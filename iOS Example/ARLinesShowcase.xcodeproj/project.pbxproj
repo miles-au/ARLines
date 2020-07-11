@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0760A8D524B9E4AD00F0886B /* ARLine3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0760A8D424B9E4AD00F0886B /* ARLine3D.swift */; };
 		07F176A824B978B700073273 /* SCNVector3Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F176A724B978B700073273 /* SCNVector3Extension.swift */; };
-		07F176AC24B981FE00073273 /* ARLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F176AB24B981FE00073273 /* ARLine.swift */; };
 		D9A12776235699C600D136A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12775235699C600D136A5 /* AppDelegate.swift */; };
 		D9A12778235699C600D136A5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12777235699C600D136A5 /* SceneDelegate.swift */; };
 		D9A1277A235699C600D136A5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12779235699C600D136A5 /* ViewController.swift */; };
@@ -19,8 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0760A8D424B9E4AD00F0886B /* ARLine3D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARLine3D.swift; sourceTree = "<group>"; };
 		07F176A724B978B700073273 /* SCNVector3Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNVector3Extension.swift; sourceTree = "<group>"; };
-		07F176AB24B981FE00073273 /* ARLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARLine.swift; sourceTree = "<group>"; };
 		D9A12772235699C600D136A5 /* ARLinesShowcase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLinesShowcase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9A12775235699C600D136A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9A12777235699C600D136A5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		07F176AA24B981E100073273 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				07F176AB24B981FE00073273 /* ARLine.swift */,
+				0760A8D424B9E4AD00F0886B /* ARLine3D.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -174,10 +174,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9A1277A235699C600D136A5 /* ViewController.swift in Sources */,
+				0760A8D524B9E4AD00F0886B /* ARLine3D.swift in Sources */,
 				D9A12776235699C600D136A5 /* AppDelegate.swift in Sources */,
 				D9A12778235699C600D136A5 /* SceneDelegate.swift in Sources */,
 				07F176A824B978B700073273 /* SCNVector3Extension.swift in Sources */,
-				07F176AC24B981FE00073273 /* ARLine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
