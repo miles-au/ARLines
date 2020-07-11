@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     
     var progress: userProgress = .placingLineNodes
     
-    var lineNode = SCNNode()
+    var lineNode: ARLine = ContinuousLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
     var linePositions = [SCNVector3]()
     
     var cursor = SCNNode(geometry: SCNSphere(radius: 0.005))
@@ -83,7 +83,9 @@ extension ViewController: ARSCNViewDelegate{
             if linePositions.count == 0{
                 cursor.worldPosition = centerNode
             } else if let firstPosition = linePositions.first{
-                drawLine(from: firstPosition, to: centerNode)
+                lineNode.beginning = firstPosition
+                lineNode.destination = centerNode
+                lineNode.draw()
             }
         } else if progress == .pickingLineType{
             
@@ -103,13 +105,5 @@ extension ViewController: ARSCNViewDelegate{
             return worldPosition
         }
         return nil
-    }
-    
-    func drawLine(from beginning: SCNVector3, to destination: SCNVector3){
-        let midpoint = beginning.midPoint(to: destination)
-        lineNode.worldPosition = midpoint
-        let distance = beginning.distance(to: destination)
-        lineNode.geometry = SCNBox(width: CGFloat(0.005), height: CGFloat(0.005), length: CGFloat(distance), chamferRadius: CGFloat.zero)
-        lineNode.look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
     }
 }
