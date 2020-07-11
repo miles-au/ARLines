@@ -105,6 +105,25 @@ class DashLine: ARLine3D{
     }
 }
 
+class DotLine: DashLine{
+    override init(from beginning: SCNVector3, to destination: SCNVector3) {
+        super.init(from: beginning, to: destination)
+        dashLength = width
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class LongDashshortDashLine: ARLine3D{
+    
+}
+
+class LongDashDoubleShortDashLine: ARLine3D{
+    
+}
+
 class DashDotLine: ARLine3D{
     
 }
@@ -117,15 +136,4 @@ class DashTripleDotLine: ARLine3D{
     
 }
 
-class DotLine: ARLine3D{
-    
-}
-
-class LongDashshortDashLine: ARLine3D{
-    
-}
-
-class LongDashDoubleShortDashLine: ARLine3D{
-    
-}
 

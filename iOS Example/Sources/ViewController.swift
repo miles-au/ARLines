@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     var progress: userProgress = .placingLineNodes
     
 //    var lineNode: ARLine3D = ContinuousLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
-    var lineNode: ARLine3D = DashLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
+    var lineNode: ARLine3D = DotLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
     var linePositions = [SCNVector3]()
     
     var cursor = SCNNode(geometry: SCNSphere(radius: 0.005))
