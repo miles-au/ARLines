@@ -36,7 +36,6 @@ class ViewController: UIViewController {
         
         sceneView.delegate = self
         sceneView.session = session
-        
         sceneView.automaticallyUpdatesLighting = true
         
         sceneView.addSubview(ARCoachingOverlayView())
@@ -46,15 +45,18 @@ class ViewController: UIViewController {
         lineNode = DashLine(length: 0.0)
         let redLine = ContinuousLine(length: 0.05)
         redLine.color = UIColor.red
+        let chamferLine = ContinuousLine(length: 0.2)
+        chamferLine.chamferRadius = CGFloat(0.002)
+        
         if let dashLine = lineNode as? DashLine{
             dashLine.pattern = [
-//                ContinuousLine(length: 0.05),
                 redLine,
                 Gap(length: 0.01),
-                ContinuousLine(length: 0.025),
+                chamferLine,
                 Gap(length: 0.015)
             ]
         }
+        
         sceneView.scene.rootNode.addChildNode(lineNode)
     }
     

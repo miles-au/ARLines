@@ -20,16 +20,22 @@ class ARLine3D: SCNNode{
             updateColor(of: self, with: newValue)
         }
     }
-    var chamferRadius = CGFloat.zero
+    var chamferRadius = CGFloat.zero {
+        willSet{
+            updateChamfer(of: self, with: newValue)
+        }
+    }
     var height = CGFloat(0.005)
     var width = CGFloat(0.005)
     
+    // creates line between two points
     init(from beginning: SCNVector3, to destination: SCNVector3) {
         self.beginning = beginning
         self.destination = destination
         super.init()
     }
     
+    // creates line of specified length along x axis from origin
     convenience init(length: Float) {
         self.init(from: SCNVector3.zero, to: SCNVector3(length, 0, 0))
     }
@@ -54,6 +60,28 @@ class ARLine3D: SCNNode{
             }
         }
     }
+    
+    // Recursively update the chamfer of all child nodes
+    func updateChamfer(of node: SCNNode, with radius: CGFloat){
+        // update the chamfer of this node
+        if let boxGeometry = geometry as? SCNBox{
+            boxGeometry.chamferRadius = radius
+        }
+        
+        // if has child nodes, call update chamfer on all child nodes
+        if !node.childNodes.isEmpty{
+            node.childNodes.forEach { child in
+                updateChamfer(of: child, with: radius)
+            }
+        }
+    }
+    
+    func copyFrom(line: ARLine3D){
+        beginning = line.beginning
+        destination = line.destination
+        color = line.color
+        chamferRadius = line.chamferRadius
+    }
 }
 
 class ContinuousLine: ARLine3D{
@@ -66,11 +94,12 @@ class ContinuousLine: ARLine3D{
         let distance = beginning.distance(to: destination)
         geometry = SCNBox(width: width, height: height, length: CGFloat(distance), chamferRadius: chamferRadius)
         
+        // update geometry ( must be done because of new geometry )
+        updateColor(of: self, with: color)
+        updateChamfer(of: self, with: chamferRadius)
+        
         // rotate to proper position
         look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
-        
-        // update color ( must be done because of new geometry )
-        updateColor(of: self, with: color)
     }
 }
 
@@ -112,9 +141,9 @@ class DashLine: ARLine3D{
             }
             
             guard let componentNode = component else { continue }
+            componentNode.copyFrom(line: patternComponent)
             componentNode.beginning = componentBeginning
             componentNode.destination = componentDestination
-            componentNode.color = patternComponent.color
             componentNode.convertTransform(componentNode.transform, from: self)
 
             // add the dash and draw it
