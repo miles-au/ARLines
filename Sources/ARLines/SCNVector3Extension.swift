@@ -75,4 +75,8 @@ extension SCNVector3{
         
         return sqrtf( pow((x2 - x1), 2) + pow((y2 - y1), 2) + pow((z2 - z1), 2) )
     }
+    
+    func cross(vector: SCNVector3) -> SCNVector3 {
+        return SCNVector3Make(y * vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x)
+    }
 }

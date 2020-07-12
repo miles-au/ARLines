@@ -76,11 +76,19 @@ public class ARLine3D: SCNNode{
         }
     }
     
-    func copyFrom(line: ARLine3D){
+    public func copyFrom(line: ARLine3D){
         beginning = line.beginning
         destination = line.destination
+        height = line.height
+        width = line.width
         color = line.color
         chamferRadius = line.chamferRadius
+    }
+    
+    public func copy() -> ARLine3D{
+        let copy = ARLine3D(from: beginning, to: destination)
+        copy.copyFrom(line: self)
+        return copy
     }
 }
 
@@ -101,13 +109,71 @@ public class ContinuousLine: ARLine3D{
         // rotate to proper position
         look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
     }
+    
+    public override func copy() -> ARLine3D{
+        let copy = ContinuousLine(from: beginning, to: destination)
+        copy.copyFrom(line: self)
+        return copy
+    }
 }
 
 // used as a dashline component between continuous lines
-public class Gap: ARLine3D{}
+public class Gap: ARLine3D{
+    public override init(from beginning: SCNVector3, to destination: SCNVector3) {
+        super.init(from: beginning, to: destination)
+        height = CGFloat.zero
+        width = CGFloat.zero
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func copy() -> ARLine3D{
+        let copy = Gap(from: beginning, to: destination)
+        copy.copyFrom(line: self)
+        return copy
+    }
+}
 
 public class DashLine: ARLine3D{
-    public var pattern = [ARLine3D]()
+    public var composition = [ARLine3D]()
+    override public var height: CGFloat{
+        get{
+            var maxHeight = CGFloat.zero
+            for component in composition{
+                if component.height > maxHeight{
+                    maxHeight = component.height
+                }
+            }
+            return maxHeight
+        }
+        set{
+            enumerateChildNodes { node, pointer in
+                if let line = node as? ARLine3D{
+                    line.height = newValue
+                }
+            }
+        }
+    }
+    override public var width: CGFloat{
+        get{
+            var maxWidth = CGFloat.zero
+            for component in composition{
+                if component.width > maxWidth{
+                    maxWidth = component.width
+                }
+            }
+            return maxWidth
+        }
+        set{
+            enumerateChildNodes { node, pointer in
+                if let line = node as? ARLine3D{
+                    line.width = newValue
+                }
+            }
+        }
+    }
     
     public override func draw(){
         // remove existing nodes
@@ -121,12 +187,12 @@ public class DashLine: ARLine3D{
         
         // draw components while the full distance hasn't been covered
         while distanceLeft > 0 {
-            let patternComponent = pattern[componentIndex]
+            let patternComponent = composition[componentIndex]
             let patternComponentDistance = patternComponent.distance
             
             let componentVector = beginning.vectorTo(point: destination).normalized() * Float(patternComponentDistance)
             var componentDestination = componentBeginning + componentVector
-
+            
             // if this is the last component, cut it short
             if patternComponentDistance > CGFloat(distanceLeft) {
                 componentDestination = destination
@@ -145,11 +211,11 @@ public class DashLine: ARLine3D{
             componentNode.beginning = componentBeginning
             componentNode.destination = componentDestination
             componentNode.convertTransform(componentNode.transform, from: self)
-
+            
             // add the dash and draw it
             addChildNode(componentNode)
             componentNode.draw()
-
+            
             // setup the next dash
             componentBeginning = componentDestination
             
@@ -158,11 +224,81 @@ public class DashLine: ARLine3D{
             
             // next component
             componentIndex += 1
-            if componentIndex >= pattern.count{
+            if componentIndex >= composition.count{
                 componentIndex = 0
             }
         }
+    }
+    
+    public override func copy() -> ARLine3D{
+        let copy = DashLine(from: beginning, to: destination)
+        copy.copyFrom(line: self)
+        copy.composition = composition
+        return copy
+    }
+}
+
+public class MultiLine: ARLine3D{
+    public var composition = [ARLine3D]()
+    override public var height: CGFloat{
+        get{
+            var maxHeight = CGFloat.zero
+            for component in composition{
+                if component.height > maxHeight{
+                    maxHeight = component.height
+                }
+            }
+            return maxHeight
+        }
+        set{
+            enumerateChildNodes { node, pointer in
+                if let line = node as? ARLine3D{
+                    line.height = newValue
+                }
+            }
+        }
+    }
+    
+    public override func draw(){
+        // remove existing nodes
+        enumerateChildNodes { node, pointer in
+            node.removeFromParentNode()
+        }
         
+        // get perpendicular vector
+        let up = SCNVector3(0,1,0)
+        let directionVector = beginning.vectorTo(point: destination)
+        let crossVector = up.cross(vector: directionVector).normalized()
+        
+        // get total width of multi line
+        var totalWidth = CGFloat.zero
+        for component in composition{
+            totalWidth += component.width
+        }
+        
+        // align middle
+        let alignmentVector = crossVector * -Float(totalWidth / 2)
+        
+        // draw lines
+        var drawPosition = Float.zero
+        for component in composition{
+            let displacementVector = (crossVector * drawPosition) + alignmentVector
+            
+            component.beginning = beginning + displacementVector
+            component.destination = destination + displacementVector
+            
+            addChildNode(component)
+            component.draw()
+            
+            drawPosition += Float(component.width)
+        }
+    }
+    
+    public override func copy() -> ARLine3D{
+        let copy = MultiLine(from: beginning, to: destination)
+        copy.copyFrom(line: self)
+        copy.composition = composition
+        return copy
     }
 }
 

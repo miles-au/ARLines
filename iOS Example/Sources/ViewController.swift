@@ -43,20 +43,28 @@ class ViewController: UIViewController {
         
         sceneView.scene.rootNode.addChildNode(cursor)
         
-        lineNode = DashLine(length: 0.0)
+        let dashLine = DashLine(length: 0.0)
         let redLine = ContinuousLine(length: 0.05)
         redLine.color = UIColor.red
-        let chamferLine = ContinuousLine(length: 0.2)
+        let chamferLine = ContinuousLine(length: 0.15)
         chamferLine.chamferRadius = CGFloat(0.002)
+        dashLine.composition = [
+            redLine,
+            Gap(length: 0.01),
+            chamferLine,
+            Gap(length: 0.015)
+        ]
         
-        if let dashLine = lineNode as? DashLine{
-            dashLine.pattern = [
-                redLine,
-                Gap(length: 0.01),
-                chamferLine,
-                Gap(length: 0.015)
-            ]
-        }
+        let gap = Gap(length: 0.0)
+        gap.width = CGFloat(0.05)
+        
+        let multiline = MultiLine(length: 0.0)
+        multiline.composition = [
+            dashLine,
+            gap,
+            redLine.copy()
+        ]
+        lineNode = multiline
         
         sceneView.scene.rootNode.addChildNode(lineNode)
     }
