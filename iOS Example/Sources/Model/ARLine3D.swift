@@ -12,6 +12,9 @@ import ARKit
 class ARLine3D: SCNNode{
     var beginning: SCNVector3 // first position of the line
     var destination: SCNVector3 // second position of the line
+    var distance: CGFloat{
+        return CGFloat(beginning.distance(to: destination))
+    }
     var color: UIColor = UIColor.white {
         willSet{
             updateColor(of: self, with: newValue)
@@ -27,6 +30,10 @@ class ARLine3D: SCNNode{
         super.init()
     }
     
+    convenience init(length: Float) {
+        self.init(from: SCNVector3.zero, to: SCNVector3(length, 0, 0))
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -34,7 +41,7 @@ class ARLine3D: SCNNode{
     func draw(){}
     
     // Recursively update the color of all child nodes
-    private func updateColor(of node: SCNNode, with color: UIColor){
+    func updateColor(of node: SCNNode, with color: UIColor){
         // update the color of this node
         let material = SCNMaterial()
         material.diffuse.contents = color
@@ -61,12 +68,17 @@ class ContinuousLine: ARLine3D{
         
         // rotate to proper position
         look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
+        
+        // update color ( must be done because of new geometry )
+        updateColor(of: self, with: color)
     }
 }
 
+// used as a dashline component between continuous lines
+class Gap: ARLine3D{}
+
 class DashLine: ARLine3D{
-    var dashLength = CGFloat(0.05)
-    var gap = CGFloat(0.01)
+    var pattern = [ARLine3D]()
     
     override func draw(){
         // remove existing nodes
@@ -74,66 +86,54 @@ class DashLine: ARLine3D{
             node.removeFromParentNode()
         }
         
-        let distance = beginning.distance(to: destination)
-        let dashVector = beginning.vectorTo(point: destination).normalized() * Float(dashLength)
-        let gapVector = beginning.vectorTo(point: destination).normalized() * Float(gap)
-        
-        var dashBeginning = beginning // store position of the particular dash being drawn
+        var componentBeginning = beginning // store position where next component will be drawn from
         var distanceLeft = distance // distance that hasn't been covered
+        var componentIndex = 0 // stores which component should be drawn
         
-        // draw dashes while the full distance hasn't been covered
+        // draw components while the full distance hasn't been covered
         while distanceLeft > 0 {
-            var dashDestination = dashBeginning + dashVector
+            let patternComponent = pattern[componentIndex]
+            let patternComponentDistance = patternComponent.distance
             
-            // if this is the last dash, cut it short
-            if dashLength > CGFloat(distanceLeft) {
-                dashDestination = destination
+            let componentVector = beginning.vectorTo(point: destination).normalized() * Float(patternComponentDistance)
+            var componentDestination = componentBeginning + componentVector
+
+            // if this is the last component, cut it short
+            if patternComponentDistance > CGFloat(distanceLeft) {
+                componentDestination = destination
             }
             
-            // a dashed line is made up of multiple continuous lines
-            let dash = ContinuousLine(from: dashBeginning, to: dashDestination)
-            dash.convertTransform(dash.transform, from: self)
+            // create component
+            var component: ARLine3D?
+            if patternComponent is ContinuousLine{
+                component = ContinuousLine(length: Float.zero)
+            } else if patternComponent is Gap{
+                component = Gap(length: Float.zero)
+            }
             
+            guard let componentNode = component else { continue }
+            componentNode.beginning = componentBeginning
+            componentNode.destination = componentDestination
+            componentNode.color = patternComponent.color
+            componentNode.convertTransform(componentNode.transform, from: self)
+
             // add the dash and draw it
-            addChildNode(dash)
-            dash.draw()
+            addChildNode(componentNode)
+            componentNode.draw()
 
             // setup the next dash
-            dashBeginning = dashDestination + gapVector
-            distanceLeft -= (dashVector.magnitude() + gapVector.magnitude())
+            componentBeginning = componentDestination
+            
+            // subtract original pattern component distance instead of calculated distance
+            distanceLeft -= patternComponentDistance
+            
+            // next component
+            componentIndex += 1
+            if componentIndex >= pattern.count{
+                componentIndex = 0
+            }
         }
+        
     }
 }
-
-class DotLine: DashLine{
-    override init(from beginning: SCNVector3, to destination: SCNVector3) {
-        super.init(from: beginning, to: destination)
-        dashLength = width
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class LongDashshortDashLine: ARLine3D{
-    
-}
-
-class LongDashDoubleShortDashLine: ARLine3D{
-    
-}
-
-class DashDotLine: ARLine3D{
-    
-}
-
-class DashDoubleDotLine: ARLine3D{
-    
-}
-
-class DashTripleDotLine: ARLine3D{
-    
-}
-
 

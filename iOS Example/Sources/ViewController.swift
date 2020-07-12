@@ -19,8 +19,7 @@ class ViewController: UIViewController {
     
     var progress: userProgress = .placingLineNodes
     
-//    var lineNode: ARLine3D = ContinuousLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
-    var lineNode: ARLine3D = DotLine(from: SCNVector3(0,0,0), to: SCNVector3(0,0,0))
+    var lineNode: ARLine3D = ARLine3D(length: 0.0)
     var linePositions = [SCNVector3]()
     
     var cursor = SCNNode(geometry: SCNSphere(radius: 0.005))
@@ -43,6 +42,19 @@ class ViewController: UIViewController {
         sceneView.addSubview(ARCoachingOverlayView())
         
         sceneView.scene.rootNode.addChildNode(cursor)
+        
+        lineNode = DashLine(length: 0.0)
+        let redLine = ContinuousLine(length: 0.05)
+        redLine.color = UIColor.red
+        if let dashLine = lineNode as? DashLine{
+            dashLine.pattern = [
+//                ContinuousLine(length: 0.05),
+                redLine,
+                Gap(length: 0.01),
+                ContinuousLine(length: 0.025),
+                Gap(length: 0.015)
+            ]
+        }
         sceneView.scene.rootNode.addChildNode(lineNode)
     }
     
