@@ -9,42 +9,42 @@
 import Foundation
 import ARKit
 
-class ARLine3D: SCNNode{
-    var beginning: SCNVector3 // first position of the line
-    var destination: SCNVector3 // second position of the line
-    var distance: CGFloat{
+public class ARLine3D: SCNNode{
+    public var beginning: SCNVector3 // first position of the line
+    public var destination: SCNVector3 // second position of the line
+    public var distance: CGFloat{
         return CGFloat(beginning.distance(to: destination))
     }
-    var color: UIColor = UIColor.white {
+    public var color: UIColor = UIColor.white {
         willSet{
             updateColor(of: self, with: newValue)
         }
     }
-    var chamferRadius = CGFloat.zero {
+    public var chamferRadius = CGFloat.zero {
         willSet{
             updateChamfer(of: self, with: newValue)
         }
     }
-    var height = CGFloat(0.005)
-    var width = CGFloat(0.005)
+    public var height = CGFloat(0.005)
+    public var width = CGFloat(0.005)
     
     // creates line between two points
-    init(from beginning: SCNVector3, to destination: SCNVector3) {
+    public init(from beginning: SCNVector3, to destination: SCNVector3) {
         self.beginning = beginning
         self.destination = destination
         super.init()
     }
     
     // creates line of specified length along x axis from origin
-    convenience init(length: Float) {
+    convenience public init(length: Float) {
         self.init(from: SCNVector3.zero, to: SCNVector3(length, 0, 0))
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func draw(){}
+    public func draw(){}
     
     // Recursively update the color of all child nodes
     func updateColor(of node: SCNNode, with color: UIColor){
@@ -84,8 +84,8 @@ class ARLine3D: SCNNode{
     }
 }
 
-class ContinuousLine: ARLine3D{
-    override func draw(){
+public class ContinuousLine: ARLine3D{
+    public override func draw(){
         // set position
         let midpoint = beginning.midPoint(to: destination)
         worldPosition = midpoint
@@ -104,12 +104,12 @@ class ContinuousLine: ARLine3D{
 }
 
 // used as a dashline component between continuous lines
-class Gap: ARLine3D{}
+public class Gap: ARLine3D{}
 
-class DashLine: ARLine3D{
-    var pattern = [ARLine3D]()
+public class DashLine: ARLine3D{
+    public var pattern = [ARLine3D]()
     
-    override func draw(){
+    public override func draw(){
         // remove existing nodes
         enumerateChildNodes { node, pointer in
             node.removeFromParentNode()
