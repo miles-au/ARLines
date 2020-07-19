@@ -36,8 +36,10 @@ public class ARLine3D: SCNNode{
     }
     
     // creates line of specified length along x axis from origin
-    convenience public init(length: Float) {
+    convenience public init(length: Float, width: Float = 0.005, height: Float = 0.005) {
         self.init(from: SCNVector3.zero, to: SCNVector3(length, 0, 0))
+        self.width = CGFloat(width)
+        self.height = CGFloat(height)
     }
     
     required public init?(coder: NSCoder) {
@@ -85,7 +87,7 @@ public class ARLine3D: SCNNode{
         chamferRadius = line.chamferRadius
     }
     
-    public func copy() -> ARLine3D{
+    public func createCopy() -> ARLine3D{
         let copy = ARLine3D(from: beginning, to: destination)
         copy.copyFrom(line: self)
         return copy
@@ -110,7 +112,7 @@ public class ContinuousLine: ARLine3D{
         look(at: destination, up: SCNVector3(0,1,0), localFront: SCNVector3(0,0,1))
     }
     
-    public override func copy() -> ARLine3D{
+    public override func createCopy() -> ARLine3D{
         let copy = ContinuousLine(from: beginning, to: destination)
         copy.copyFrom(line: self)
         return copy
@@ -129,7 +131,7 @@ public class Gap: ARLine3D{
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func copy() -> ARLine3D{
+    public override func createCopy() -> ARLine3D{
         let copy = Gap(from: beginning, to: destination)
         copy.copyFrom(line: self)
         return copy
@@ -230,7 +232,7 @@ public class DashLine: ARLine3D{
         }
     }
     
-    public override func copy() -> ARLine3D{
+    public override func createCopy() -> ARLine3D{
         let copy = DashLine(from: beginning, to: destination)
         copy.copyFrom(line: self)
         copy.composition = composition
@@ -282,19 +284,20 @@ public class MultiLine: ARLine3D{
         // draw lines
         var drawPosition = Float.zero
         for component in composition{
+            let componentNode = component.createCopy()
             let displacementVector = (crossVector * drawPosition) + alignmentVector
             
-            component.beginning = beginning + displacementVector
-            component.destination = destination + displacementVector
+            componentNode.beginning = beginning + displacementVector
+            componentNode.destination = destination + displacementVector
             
-            addChildNode(component)
-            component.draw()
+            addChildNode(componentNode)
+            componentNode.draw()
             
             drawPosition += Float(component.width)
         }
     }
     
-    public override func copy() -> ARLine3D{
+    public override func createCopy() -> ARLine3D{
         let copy = MultiLine(from: beginning, to: destination)
         copy.copyFrom(line: self)
         copy.composition = composition

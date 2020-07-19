@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07BDB50524C5084900EBCC80 /* ViewController+PickerViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDB50424C5084900EBCC80 /* ViewController+PickerViewExtension.swift */; };
+		07BDB50724C5093A00EBCC80 /* ViewController+SceneViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDB50624C5093A00EBCC80 /* ViewController+SceneViewExtension.swift */; };
 		D9A12776235699C600D136A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12775235699C600D136A5 /* AppDelegate.swift */; };
 		D9A12778235699C600D136A5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12777235699C600D136A5 /* SceneDelegate.swift */; };
 		D9A1277A235699C600D136A5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A12779235699C600D136A5 /* ViewController.swift */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07BDB50424C5084900EBCC80 /* ViewController+PickerViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+PickerViewExtension.swift"; sourceTree = "<group>"; };
+		07BDB50624C5093A00EBCC80 /* ViewController+SceneViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+SceneViewExtension.swift"; sourceTree = "<group>"; };
 		D9A12772235699C600D136A5 /* ARLinesShowcase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLinesShowcase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9A12775235699C600D136A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9A12777235699C600D136A5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +70,8 @@
 				D9A1277E235699C700D136A5 /* Assets.xcassets */,
 				D9A12780235699C700D136A5 /* LaunchScreen.storyboard */,
 				D9A12783235699C700D136A5 /* Info.plist */,
+				07BDB50424C5084900EBCC80 /* ViewController+PickerViewExtension.swift */,
+				07BDB50624C5093A00EBCC80 /* ViewController+SceneViewExtension.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -153,7 +159,9 @@
 			files = (
 				D9A1277A235699C600D136A5 /* ViewController.swift in Sources */,
 				D9A12776235699C600D136A5 /* AppDelegate.swift in Sources */,
+				07BDB50724C5093A00EBCC80 /* ViewController+SceneViewExtension.swift in Sources */,
 				D9A12778235699C600D136A5 /* SceneDelegate.swift in Sources */,
+				07BDB50524C5084900EBCC80 /* ViewController+PickerViewExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

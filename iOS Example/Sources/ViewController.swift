@@ -15,10 +15,30 @@ class ViewController: UIViewController {
     @IBOutlet weak var sceneView: ARSCNView!
     @IBOutlet weak var instructionsStackView: UIStackView!
     
+    // line type picker
+    @IBOutlet weak var lineTypeStackview: UIStackView!
+    @IBOutlet weak var lineTypePickerView: UIPickerView!
+    
     let session = ARSession()
     var screenCenter: CGPoint!
     
-    var progress: userProgress = .placingLineNodes
+    var progress: userProgress = .pickingLineType {
+        willSet{
+            switch newValue {
+            case .placingLineNodes:
+                lineTypeStackview.isHidden = true
+                instructionsStackView.isHidden = false
+                cursor.isHidden = false
+            case .pickingLineType:
+                linePositions = []
+                lineTypeStackview.isHidden = false
+                instructionsStackView.isHidden = true
+                cursor.isHidden = true
+            default:
+                print("progress set to: \(newValue)")
+            }
+        }
+    }
     
     var lineNode: ARLine3D = ARLine3D(length: 0.0)
     var linePositions = [SCNVector3]()
@@ -31,42 +51,12 @@ class ViewController: UIViewController {
         case pickingLineColor
     }
     
+    var lineTypeOptions: [(String, ARLine3D)] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        screenCenter = view.center
-        
-        sceneView.delegate = self
-        sceneView.session = session
-        sceneView.automaticallyUpdatesLighting = true
-        
-        sceneView.addSubview(ARCoachingOverlayView())
-        
-        sceneView.scene.rootNode.addChildNode(cursor)
-        
-        let dashLine = DashLine(length: 0.0)
-        let redLine = ContinuousLine(length: 0.05)
-        redLine.color = UIColor.red
-        let chamferLine = ContinuousLine(length: 0.15)
-        chamferLine.chamferRadius = CGFloat(0.002)
-        dashLine.composition = [
-            redLine,
-            Gap(length: 0.01),
-            chamferLine,
-            Gap(length: 0.015)
-        ]
-        
-        let gap = Gap(length: 0.0)
-        gap.width = CGFloat(0.05)
-        
-        let multiline = MultiLine(length: 0.0)
-        multiline.composition = [
-            dashLine,
-            gap,
-            redLine.copy()
-        ]
-        lineNode = multiline
-        
-        sceneView.scene.rootNode.addChildNode(lineNode)
+        setupSceneView()
+        setupPickerView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -83,51 +73,5 @@ class ViewController: UIViewController {
         session.pause()
         
         super.viewWillDisappear(true)
-    }
-    
-    @IBAction func placeNodeButtonPressed(_ sender: UIButton) {
-        if progress == .placingLineNodes, let centerNode = screenCenterFeaturePoint(){
-            linePositions.append(centerNode)
-            if linePositions.count == 2{
-                progress = .pickingLineType
-                cursor.isHidden = true
-            }else{
-                cursor.isHidden = false
-            }
-        } else {
-            cursor.isHidden = true
-        }
-    }
-    
-}
-
-extension ViewController: ARSCNViewDelegate{
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if progress == .placingLineNodes, let centerNode = screenCenterFeaturePoint(){
-            if linePositions.count == 0{
-                cursor.worldPosition = centerNode
-            } else if let firstPosition = linePositions.first{
-                lineNode.beginning = firstPosition
-                lineNode.destination = centerNode
-                lineNode.draw()
-            }
-        } else if progress == .pickingLineType{
-            
-        }
-    }
-    
-    func screenCenterFeaturePoint() -> SCNVector3? {
-        // Get feature point from the center of the screen
-        if let featurepoint = sceneView.hitTest(screenCenter, types: .featurePoint).first{
-            // push feature point position to line nodes array
-            let transformColumn3 = featurepoint.worldTransform.columns.3
-            let worldPosition = SCNVector3(
-                transformColumn3.x,
-                transformColumn3.y,
-                transformColumn3.z
-            )
-            return worldPosition
-        }
-        return nil
     }
 }
