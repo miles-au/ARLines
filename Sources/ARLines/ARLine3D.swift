@@ -36,7 +36,7 @@ public class ARLine3D: SCNNode{
     }
     
     // creates line of specified length along x axis from origin
-    convenience public init(length: Float, width: Float = 0.005, height: Float = 0.005) {
+    convenience public init(length: Float = 0.0, width: Float = 0.005, height: Float = 0.005) {
         self.init(from: SCNVector3.zero, to: SCNVector3(length, 0, 0))
         self.width = CGFloat(width)
         self.height = CGFloat(height)

@@ -33,15 +33,19 @@ extension ViewController{
         lineTypePickerView.dataSource = self
         
         // Solid Line
-        lineTypeOptions.append(("Continuous" , ContinuousLine(length: Float.zero)))
+        lineTypeOptions.append(("Continuous" , ContinuousLine()))
         
         // Red Line
-        let redLine = ContinuousLine(length: Float.zero)
+        let redLine = ContinuousLine()
         redLine.color = UIColor.red
         lineTypeOptions.append(("Red Line" , redLine))
         
+        // Wide Line
+        let wideLine = ContinuousLine(width: Float(0.05))
+        lineTypeOptions.append(("Wide Line" , wideLine))
+        
         // Dash Line
-        let dashLine = DashLine(length: Float.zero)
+        let dashLine = DashLine()
         dashLine.composition = [
             ContinuousLine(length: Float(0.15)),
             Gap(length: 0.01),
@@ -50,23 +54,35 @@ extension ViewController{
         ]
         lineTypeOptions.append(("Dash Line" , dashLine))
         
+        // Rounded Dash Line
+        let roundedDashLine = DashLine()
+        let roundedDash = ContinuousLine(length: Float(0.05))
+        roundedDash.chamferRadius = CGFloat(0.0025)
+        roundedDashLine.composition = [
+            roundedDash,
+            Gap(length: 0.01),
+            roundedDash,
+            Gap(length: 0.01)
+        ]
+        lineTypeOptions.append(("Rounded Dash Line" , roundedDashLine))
+        
         // MultiLine
-        let multiline = MultiLine(length: 0.0)
+        let multiline = MultiLine()
         multiline.composition = [
             dashLine,
-            Gap(length: Float.zero, width: 0.05),
-            ContinuousLine(length: Float.zero)
+            Gap(width: 0.05),
+            ContinuousLine()
         ]
         lineTypeOptions.append(("Multi Line" , multiline))
         
         // Mixed Line
-        let mixedLine = MultiLine(length: 0.0)
+        let mixedLine = MultiLine()
         mixedLine.composition = [
             dashLine,
-            Gap(length: Float.zero, width: 0.01),
+            Gap(width: 0.01),
             redLine,
-            Gap(length: Float.zero, width: 0.01),
-            ContinuousLine(length: Float.zero)
+            Gap(width: 0.01),
+            ContinuousLine()
         ]
         lineTypeOptions.append(("Mixed Line" , mixedLine))
         
