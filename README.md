@@ -6,6 +6,7 @@
 
 <a href="https://placehold.it/400?text=Screen+shot"><img width=200 height=200 src="https://placehold.it/400?text=Screen+shot" alt="Screenshot" /></a>
 
+<img src="https://github.com/miles-au/ARLines/blob/master/gifs/demo.gif?raw=true" width="300" title="ARLines Demo">
 
 ## Showcase
 
