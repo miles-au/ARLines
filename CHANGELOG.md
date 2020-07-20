@@ -1,10 +1,9 @@
-# Change Log
-All notable changes to this project will be documented in this file.
-ARLines adheres to [Semantic Versioning](http://semver.org/).
+# Changelog
 
-## [Master](https://github.com/miles-au/ARLines)
-### Added
-
-### Changed
-
-### Removed
+  
+## 0.0.1
+* Line drawings for:
+    * Continuous Line
+    * Colored Line
+    * Dash Line
+    * Multi Lines
